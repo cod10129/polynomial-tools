@@ -35,7 +35,7 @@ impl ops::Add<f64> for Linear {
     Self::new(self.a, self.b + other)
   }
 }
-  
+
 impl ops::Sub<Linear> for Linear {
   type Output = Self;
   fn sub(self, other: Self) -> Self::Output {
@@ -81,8 +81,11 @@ impl Polynomial for Linear {
     self.a == 0.0 &&
     self.b == 0.0
   }
-  fn degree(&self) -> u8 {
-    1
+  fn degree(&self) -> u8 { 1 }
+
+  type Derivative = f64;
+  fn derivative(&self) -> Self::Derivative {
+    self.a
   }
 }
 

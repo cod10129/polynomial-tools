@@ -165,7 +165,6 @@ impl Polynomial for Quartic {
     (self.d * x) +
     (self.e)
   }
-
   fn is_zero(&self) -> bool {
     self.a == 0.0 &&
     self.b == 0.0 &&
@@ -173,8 +172,17 @@ impl Polynomial for Quartic {
     self.d == 0.0 &&
     self.e == 0.0
   }
-    
   fn degree(&self) -> u8 { 4 }
+
+  type Derivative = Cubic;
+  fn derivative(&self) -> Self::Derivative {
+    Cubic::new(
+      self.a * 4.0,
+      self.b * 3.0,
+      self.c * 2.0,
+      self.d
+    )
+  }
 }
 
 impl Quartic {

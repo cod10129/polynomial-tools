@@ -146,15 +146,22 @@ impl Polynomial for Cubic {
     (self.c * x) +
     self.d
   }
-
   fn is_zero(&self) -> bool {
     self.a == 0.0 &&
     self.b == 0.0 &&
     self.c == 0.0 &&
     self.d == 0.0
   }
-
   fn degree(&self) -> u8 { 3 }
+
+  type Derivative = Quadratic;
+  fn derivative(&self) -> Self::Derivative {
+    Quadratic::new(
+      self.a * 3.0,
+      self.b * 2.0,
+      self.c
+    )
+  }
 }
   
 impl Cubic {

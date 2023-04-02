@@ -45,8 +45,28 @@ pub trait Polynomial {
   /// false otherwise
   fn is_zero(&self) -> bool;
   /// Returns the degree of the polynomial.
-  // Note: this is for functions that take <T: math::Polynomial>
+  // Note: this is for functions that take <T: Polynomial>
   fn degree(&self) -> u8;
+  type Derivative: Polynomial;
+  /// Returns the derivative of the polynomial.
+  /// This derivative is returned in the form of another polynomial.
+  fn derivative(&self) -> Self::Derivative;
+}
+
+impl Polynomial for f64 {
+  #[allow(unused_variables)]
+  fn evaluate(&self, x: f64) -> f64 {
+    self.to_owned()
+  }
+  fn is_zero(&self) -> bool {
+    self.to_owned() == 0.0
+  }
+  fn degree(&self) -> u8 { 0 }
+  
+  type Derivative = f64;
+  fn derivative(&self) -> Self::Derivative {
+    0.0
+  }
 }
 
 mod linear;
@@ -63,6 +83,30 @@ pub use quartic::Quartic;
 mod tests {
   use super::*;
 
+  mod f64 {
+    use super::Polynomial;
+    #[test]
+    fn eval() {
+      assert_eq!(1.0.evaluate(0.0), 1.0);
+    }
+
+    #[test]
+    fn is_zero() {
+      assert!(0.0.is_zero());
+      assert!(!1.0.is_zero());
+    }
+
+    #[test]
+    fn degree() {
+      assert_eq!(0.0.degree(), 0);
+    }
+    
+    #[test]
+    fn derive() {
+      assert_eq!(3.0.derivative(), 0.0);
+    }
+  }
+  
   mod linear {
     use super::{Polynomial, Linear};
     #[test]
@@ -131,6 +175,11 @@ mod tests {
       let l2 = Linear::new(1.0, 0.0);
       assert!(l.is_zero());
       assert!(!l2.is_zero());
+    }
+
+    #[test]
+    fn derive() {
+      assert_eq!(Linear::new_i(2, 3).derivative(), 2.0);
     }
   }
 
@@ -223,6 +272,13 @@ mod tests {
       let q2 = Quadratic::new(0.0, 1.0, 0.0);
       assert!(q.is_zero());
       assert!(!q2.is_zero());
+    }
+
+    #[test]
+    fn derive() {
+      use super::Linear;
+      let q = Quadratic::new_i(3, 2, 1);
+      assert_eq!(q.derivative(), Linear::new_i(6, 2));
     }
   }
 
@@ -331,6 +387,12 @@ mod tests {
       assert!(c.is_zero());
       assert!(!BC.is_zero());
     }
+
+    #[test]
+    fn derive() {
+      use super::Quadratic;
+      assert_eq!(BC.derivative(), Quadratic::new_i(3, 4, 3));
+    }
   }
 
   mod quartic {
@@ -433,6 +495,13 @@ mod tests {
       let q = Quartic::new_i(0, 0, 0, 0, 0);
       assert!(q.is_zero());
       assert!(!BQ.is_zero());
+    }
+
+    #[test]
+    fn derive() {
+      use super::Cubic;
+      let c = Cubic::new_i(4, 6, 6, 4);
+      assert_eq!(BQ.derivative(), c);
     }
   }
 }

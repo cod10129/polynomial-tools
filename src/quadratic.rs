@@ -134,6 +134,14 @@ impl Polynomial for Quadratic {
     self.c == 0.0
   }
   fn degree(&self) -> u8 { 2 }
+
+  type Derivative = Linear;
+  fn derivative(&self) -> Self::Derivative {
+    Linear::new(
+      self.a * 2.0,
+      self.b
+    )
+  }
 }
 
 impl Quadratic {
