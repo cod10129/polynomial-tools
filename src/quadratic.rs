@@ -183,7 +183,7 @@ impl Quadratic {
   ///
   /// # Errors:
   /// An Err is returned if the Quadratic has no real roots
-  pub fn solver(&self) -> Result<[f64; 2], &str> {
+  pub fn roots(&self) -> Result<[f64; 2], &str> {
     let discriminant = self.discriminant();
     // Check if the roots are complex
     // If so, return an Err

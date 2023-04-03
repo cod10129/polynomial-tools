@@ -102,4 +102,15 @@ impl Linear {
       b: b.into()
     }
   }
+
+  /// Finds the root of the Linear
+  /// 
+  /// # Errors:
+  /// If no (or infinitely many) roots exist, an Err is returned.
+  pub fn root(&self) -> Result<f64, &str> {
+    if self.a == 0.0 {
+      return Err("a must be non-zero");
+    }
+    Ok(-(self.b / self.a))
+  }
 }

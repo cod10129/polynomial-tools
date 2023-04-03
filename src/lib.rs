@@ -1,4 +1,4 @@
-//! Functions for operations on polynomials
+//! Functions for operations on polynomials.
 
 fn plus_minus(val: f64, string: String) -> String {
   if val > 0.0 {
@@ -38,6 +38,7 @@ fn display_header(val: f64, suffix: String) -> String {
   }
 }
 
+/// A trait providing methods for operations on polynomials.
 pub trait Polynomial {
   /// Evaluates the polynomial for the given x.
   fn evaluate(&self, x: f64) -> f64;
@@ -47,6 +48,7 @@ pub trait Polynomial {
   /// Returns the degree of the polynomial.
   // Note: this is for functions that take <T: Polynomial>
   fn degree(&self) -> u8;
+  /// The type returned by the derivative() function
   type Derivative: Polynomial;
   /// Returns the derivative of the polynomial.
   /// This derivative is returned in the form of another polynomial.
