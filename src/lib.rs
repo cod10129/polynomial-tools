@@ -38,6 +38,86 @@ fn display_header(val: f64, suffix: String) -> String {
   }
 }
 
+fn larger<T: std::cmp::PartialOrd>(first: T, second: T) -> T {
+  if first > second {
+    first
+  } else {
+    second
+  }
+}
+
+fn inbounds<T>(index: usize, vec: &Vec<T>) -> bool {
+  index < vec.len()
+}
+
+/// A struct that represents any polynomial.
+#[derive(Debug, Clone, PartialEq)]
+pub struct GeneralPolynomial {
+  data: Vec<f64>
+}
+
+impl std::ops::Add<Self> for GeneralPolynomial {
+  type Output = Self;
+  fn add(self, other: Self) -> Self::Output {
+    let size = larger(self.data.len(), other.data.len());
+    let mut new = Vec::with_capacity(size);
+    let mut to_push = 0.0;
+    for i in 0..size {
+      if inbounds(i, &self.data) && inbounds(i, &other.data) {
+        to_push = self.data[i] + other.data[i];
+      }
+      else if inbounds(i, &self.data) && !inbounds(i, &other.data) { 
+        to_push = self.data[i];
+      } 
+      else if inbounds(i, &other.data) && !inbounds(i, &self.data) {
+        to_push = other.data[i];
+      }
+      new.push(to_push)
+    }
+    Self::new(new)
+  }
+}
+
+impl std::ops::Sub<Self> for GeneralPolynomial {
+  type Output = Self;
+  fn sub(self, other: Self) -> Self::Output {
+    let size = larger(self.data.len(), other.data.len());
+    let mut new = Vec::with_capacity(size);
+    let mut to_push = 0.0;
+    for i in 0..size {
+      if inbounds(i, &self.data) && inbounds(i, &other.data) {
+        to_push = self.data[i] - other.data[i];
+      }
+      else if inbounds(i, &self.data) && !inbounds(i, &other.data) { 
+        to_push = self.data[i];
+      } 
+      else if inbounds(i, &other.data) && !inbounds(i, &self.data) {
+        to_push = other.data[i];
+      }
+      new.push(to_push)
+    }
+    Self::new(new)
+  }
+}
+
+// fmt::Display for GeneralPolynomial coming in 0.2.2
+
+impl GeneralPolynomial {
+  /// Creates a new GeneralPolynomial
+  pub fn new(data: Vec<f64>) -> Self {
+    Self { data }
+  }
+
+  /// Creates a new GeneralPolynomial from integers.
+  pub fn new_i(data: Vec<i32>) -> Self {
+    let mut new = Vec::with_capacity(data.len());
+    for i in 0..data.len() {
+      new.push(data[i].into());
+    }
+    Self { data: new }
+  }
+}
+
 /// A trait providing methods for operations on polynomials.
 pub trait Polynomial {
   /// Evaluates the polynomial for the given x.
@@ -85,6 +165,18 @@ pub use quartic::Quartic;
 mod tests {
   use super::*;
 
+  mod gp {
+    use super::GeneralPolynomial;
+
+    #[test]
+    fn add() {
+      let gp1 = GeneralPolynomial::new(vec![-2.0, -3.0, 0.0, 4.0, 6.0]);
+      let gp2 = GeneralPolynomial::new(vec![ 0.0, 4.0, -4.6, 16.0]);
+      let gp3 = GeneralPolynomial::new(vec![-2.0, 1.0, -4.6, 20.0, 6.0]);
+      assert_eq!(gp1 + gp2, gp3);
+    }
+  }
+  
   mod f64 {
     use super::Polynomial;
     #[test]
@@ -177,6 +269,12 @@ mod tests {
       let l2 = Linear::new(1.0, 0.0);
       assert!(l.is_zero());
       assert!(!l2.is_zero());
+    }
+
+    #[test]
+    fn root() {
+      let l = Linear::new_i(1, 2);
+      assert_eq!(l.root().unwrap(), -2.0);
     }
 
     #[test]
@@ -274,6 +372,12 @@ mod tests {
       let q2 = Quadratic::new(0.0, 1.0, 0.0);
       assert!(q.is_zero());
       assert!(!q2.is_zero());
+    }
+
+    #[test]
+    fn roots() {
+      let result = Quadratic::new_i(1, 4, 3).roots().unwrap();
+      assert_eq!(result, [-1.0, -3.0]);
     }
 
     #[test]
