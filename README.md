@@ -1,3 +1,3 @@
 # polynomial_tools
 
-A crate that contains some utilities for operations on polynomials.
+A crate that contains utilities for operations on polynomials.

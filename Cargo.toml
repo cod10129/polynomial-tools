@@ -1,12 +1,13 @@
 [package]
 name = "polynomial_tools"
-version = "0.2.1"
+version = "0.3.0"
 edition = "2021"
-description = "A crate that contains some utilities for operations on polynomials."
+description = "A crate that contains utilities for operations on polynomials."
 license = "MIT"
-exclude = ["replit.nix"]
 repository = "https://github.com/cod10129/polynomial_tools"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+num-complex = "0.4.3"
+num-traits = "0.2.11"
